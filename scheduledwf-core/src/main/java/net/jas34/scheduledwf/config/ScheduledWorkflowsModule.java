@@ -4,12 +4,9 @@ import com.coreoz.wisp.Scheduler;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import net.jas34.scheduledwf.dao.IndexScheduledWfDAO;
+
 import net.jas34.scheduledwf.dao.ScheduledWfExecutionDAO;
-import net.jas34.scheduledwf.dao.ScheduledWfMetadataDAO;
 import net.jas34.scheduledwf.dao.memory.InMemoryScheduledWfExecutionDAO;
-import net.jas34.scheduledwf.dao.memory.InMemoryScheduledWfMetadataDAO;
-import net.jas34.scheduledwf.dao.memory.InMemoryIndexScheduledWfDAO;
 import net.jas34.scheduledwf.execution.DefaultScheduledProcessRegistry;
 import net.jas34.scheduledwf.execution.DefaultSchedulerManager;
 import net.jas34.scheduledwf.execution.DefaultWorkflowSchedulingAssistant;
@@ -25,7 +22,6 @@ import net.jas34.scheduledwf.scheduler.ScheduledTaskProvider;
 import net.jas34.scheduledwf.scheduler.SchedulerStats;
 import net.jas34.scheduledwf.scheduler.WorkflowScheduler;
 import net.jas34.scheduledwf.scheduler.WorkflowSchedulerFactory;
-import net.jas34.scheduledwf.service.LockingService;
 import net.jas34.scheduledwf.service.MetadataService;
 import net.jas34.scheduledwf.service.MetadataServiceImpl;
 import net.jas34.scheduledwf.service.SchedulerExecutionService;
@@ -33,19 +29,16 @@ import net.jas34.scheduledwf.service.SchedulerExecutionService;
 /**
  * @author Jasbir Singh
  */
-public class ScheduledWorkdlowsModule extends AbstractModule {
+public class ScheduledWorkflowsModule extends AbstractModule {
+
     @Override
     protected void configure() {
-        // TODO: this is not final config. Will be revisited later
-        // DAO Config...
-        bind(IndexScheduledWfDAO.class).to(InMemoryIndexScheduledWfDAO.class);
+        // dao Binding
         bind(ScheduledWfExecutionDAO.class).to(InMemoryScheduledWfExecutionDAO.class);
-        bind(ScheduledWfMetadataDAO.class).to(InMemoryScheduledWfMetadataDAO.class);
 
         // metadata service
         bind(MetadataService.class).to(MetadataServiceImpl.class);
         bind(SchedulerExecutionService.class);
-        bind(LockingService.class);
 
         // scheduler config....
         bind(Scheduler.class).toProvider(WispSchedulerProvider.class).in(Scopes.SINGLETON);

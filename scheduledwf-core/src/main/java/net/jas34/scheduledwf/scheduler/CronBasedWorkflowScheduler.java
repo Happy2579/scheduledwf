@@ -3,17 +3,19 @@ package net.jas34.scheduledwf.scheduler;
 import java.time.Duration;
 import java.util.Optional;
 
+import javax.annotation.PreDestroy;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.coreoz.wisp.Job;
 import com.coreoz.wisp.Scheduler;
 import com.coreoz.wisp.schedule.Schedule;
 import com.coreoz.wisp.schedule.cron.CronSchedule;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import net.jas34.scheduledwf.run.ScheduledWorkFlow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
+import net.jas34.scheduledwf.run.ScheduledWorkFlow;
 
 /**
  * @author Jasbir Singh
@@ -36,7 +38,7 @@ public class CronBasedWorkflowScheduler
     public CronBasedScheduledProcess<Job> schedule(ScheduledWorkFlow scheduledWorkFlow) {
         Schedule schedule = CronSchedule.parseQuartzCron(scheduledWorkFlow.getCronExpression());
         Job scheduledJob = scheduler.schedule(scheduledWorkFlow.getName(),
-                taskProvider.getTask(scheduledWorkFlow), schedule);
+                taskProvider.getTask(scheduledWorkFlow, this), schedule);
         logger.info("scheduledWorkFlow scheduled with jobName={}", scheduledJob.name());
         return new CronBasedScheduledProcess<>(scheduledJob);
     }
@@ -64,11 +66,6 @@ public class CronBasedWorkflowScheduler
         return resolveJobFromName(scheduledWfName).lastExecutionEndedTimeInMillis();
     }
 
-    @Override
-    public int executionsCount(String scheduledWfName) {
-        return resolveJobFromName(scheduledWfName).executionsCount();
-    }
-
     @PreDestroy
     public void shutDownScheduler() {
         logger.info("Going to shutdown cron scheduler");
@@ -80,5 +77,4 @@ public class CronBasedWorkflowScheduler
         Optional<Job> job = scheduler.findJob(scheduledWfName);
         return job.orElse(null);
     }
-// TODO: to shutdown scheduler itself
 }
