@@ -28,7 +28,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/jas34/scheduledwf.git</connection>
 		<url>https://github.com/jas34/scheduledwf</url>
-		<tag>1.0.0-rc1</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
